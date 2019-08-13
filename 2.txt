@@ -1,0 +1,24 @@
+  8           0 LOAD_CONST               3 (None)
+              3 STORE_FAST               1 (quote_char)
+
+  9           6 SETUP_LOOP              36 (to 45)
+              9 LOAD_FAST                0 (part)
+             12 GET_ITER            
+        >>   13 FOR_ITER                28 (to 44)
+             16 STORE_FAST               2 (ch)
+
+ 10          19 LOAD_FAST                2 (ch)
+             22 LOAD_CONST               4 (('"', "'"))
+             25 COMPARE_OP               6 (in)
+             28 POP_JUMP_IF_FALSE       13
+
+ 11          31 LOAD_FAST                2 (ch)
+             34 STORE_FAST               1 (quote_char)
+
+ 12          37 BREAK_LOOP          
+             38 JUMP_ABSOLUTE           13
+             41 JUMP_ABSOLUTE           13
+        >>   44 POP_BLOCK           
+
+ 13     >>   45 LOAD_FAST                1 (quote_char)
+             48 RETURN_VALUE        
