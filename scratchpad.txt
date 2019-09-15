@@ -1,0 +1,3 @@
+Streaming cloudwatch logs directly to ES service(without lambda): https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/CWL_ES_Stream.html
+Creating trigger on log event(like trigger lambda on new log event in a log group): https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/Subscriptions.html
+Creating a document in ES using lambda: https://docs.aws.amazon.com/elasticsearch-service/latest/developerguide/es-aws-integrations.html
