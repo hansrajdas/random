@@ -20,7 +20,7 @@ int main(int argc, char** argv) {
     char buffer[BUFSIZ];
     enum CONSTEXPR { MAX_REQUEST_LEN = 1024};
     char request[MAX_REQUEST_LEN];
-    char request_template[] = "GET / HTTP/1.1\r\nHost: %s\r\nCache-Control: private, no-store, max-age=0\r\n\r\n";
+    char request_template[] = "GET /?%ld HTTP/1.1\r\nHost: %s\r\nCache-Control: private, no-store, max-age=0\r\n\r\n";
     struct protoent *protoent;
     char *hostname = "example.com";
     in_addr_t in_addr;
@@ -36,12 +36,6 @@ int main(int argc, char** argv) {
         hostname = argv[1];
     if (argc > 2)
         server_port = strtoul(argv[2], NULL, 10);
-
-    request_len = snprintf(request, MAX_REQUEST_LEN, request_template, hostname);
-    if (request_len >= MAX_REQUEST_LEN) {
-        fprintf(stderr, "request length large: %d\n", request_len);
-        exit(EXIT_FAILURE);
-    }
 
     /* Build the socket. */
     protoent = getprotobyname("tcp");
@@ -78,6 +72,12 @@ int main(int argc, char** argv) {
 
     /* Send HTTP request. */
     do {
+        request_len = snprintf(request, MAX_REQUEST_LEN, request_template, req_count, hostname);
+        if (request_len >= MAX_REQUEST_LEN) {
+            fprintf(stderr, "request length large: %d\n", request_len);
+            exit(EXIT_FAILURE);
+        }
+
         nbytes_total = 0;
         while (nbytes_total < request_len) {
             printf("Before sending\n");
@@ -103,6 +103,7 @@ int main(int argc, char** argv) {
 
         req_count += 1;
         printf("Sent %ld HTTP requests\n", req_count);
+#if 0
         if (req_count % 2500 == 0) {
             fprintf(stderr, "Reconnecting...\n");
             close(socket_file_descriptor);
@@ -116,6 +117,7 @@ int main(int argc, char** argv) {
                 exit(EXIT_FAILURE);
             }
         }
+#endif
     } while(1);
     close(socket_file_descriptor);
     exit(EXIT_SUCCESS);
