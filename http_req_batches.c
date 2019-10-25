@@ -22,7 +22,10 @@ int main(int argc, char** argv) {
     char request[MAX_REQUEST_LEN];
     char request_template[] = "GET /?abc-%ld HTTP/1.1\r\n"
                               "Host: %s\r\n"
-                              "Cache-Control: private, no-cache, no-store, max-age=0\r\n\r\n";
+                              "Cache-Control: private, no-cache, no-store, max-age=0\r\n\r\n"
+                              "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_0) "
+                              "AppleWebKit/537.36 (KHTML, like Gecko) "
+                              "Chrome/77.0.%ld.120 Safari/537.36";
     struct protoent *protoent;
     char *hostname = "example.com";
     in_addr_t in_addr;
@@ -74,7 +77,7 @@ int main(int argc, char** argv) {
 
     /* Send HTTP request. */
     do {
-        request_len = snprintf(request, MAX_REQUEST_LEN, request_template, req_count, hostname);
+        request_len = snprintf(request, MAX_REQUEST_LEN, request_template, req_count, hostname, req_count);
         if (request_len >= MAX_REQUEST_LEN) {
             fprintf(stderr, "request length large: %d\n", request_len);
             exit(EXIT_FAILURE);
