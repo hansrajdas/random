@@ -20,7 +20,9 @@ int main(int argc, char** argv) {
     char buffer[BUFSIZ];
     enum CONSTEXPR { MAX_REQUEST_LEN = 1024};
     char request[MAX_REQUEST_LEN];
-    char request_template[] = "GET /?%ld HTTP/1.1\r\nHost: %s\r\nCache-Control: private, no-store, max-age=0\r\n\r\n";
+    char request_template[] = "GET /?abc-%ld HTTP/1.1\r\n"
+                              "Host: %s\r\n"
+                              "Cache-Control: private, no-cache, no-store, max-age=0\r\n\r\n";
     struct protoent *protoent;
     char *hostname = "example.com";
     in_addr_t in_addr;
