@@ -76,6 +76,7 @@ int main(int argc, char** argv) {
     }
 
     /* Send HTTP request. */
+    signal(SIGPIPE, SIG_IGN);
     do {
         request_len = snprintf(request, MAX_REQUEST_LEN, request_template, req_count, hostname, req_count);
         if (request_len >= MAX_REQUEST_LEN) {
@@ -100,7 +101,6 @@ int main(int argc, char** argv) {
             // write(STDOUT_FILENO, buffer, nbytes_total);
         }
         fprintf(stderr, "debug: after read\n");
-        // fprintf(stderr, "debug: after last read\n");
         if (nbytes_total == -1) {
             perror("read");
             exit(EXIT_FAILURE);
