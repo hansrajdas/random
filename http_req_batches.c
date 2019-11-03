@@ -1,5 +1,5 @@
 /* https://cirosantilli.com/linux-kernel-module-cheat#socket */
-/* 
+/*
  * Source:
  * https://github.com/cirosantilli/linux-kernel-module-cheat/blob/b4b2164f29f3ae04ae9e3b7c0913ee8125910476/userland/posix/wget.c
  */
@@ -15,10 +15,16 @@
 #include <string.h>
 #include <sys/socket.h>
 #include <unistd.h>
+#include "pthread.h"
 
-int main(int argc, char** argv) {
-    char buffer[BUFSIZ];
-    enum CONSTEXPR { MAX_REQUEST_LEN = 1024};
+void *send_http_request(void *sd) {
+    ssize_t nbytes_last;
+    ssize_t nbytes_total;
+    unsigned long int req_count = 0;
+    int request_len;
+    int socket_file_descriptor = *(int *)sd;
+    enum CONSTEXPR {MAX_REQUEST_LEN = 1024};
+    char *hostname = "www.pikusports.com";
     char request[MAX_REQUEST_LEN];
     char request_template[] = "GET /?abc-%ld HTTP/1.1\r\n"
                               "Host: %s\r\n"
@@ -26,16 +32,63 @@ int main(int argc, char** argv) {
                               "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_0) "
                               "AppleWebKit/537.36 (KHTML, like Gecko) "
                               "Chrome/77.0.%ld.120 Safari/537.36";
+
+    signal(SIGPIPE, SIG_IGN);
+    do {
+        request_len = snprintf(request, MAX_REQUEST_LEN, request_template, req_count, hostname, req_count);
+        if (request_len >= MAX_REQUEST_LEN) {
+            fprintf(stderr, "request length large: %d\n", request_len);
+            return NULL;
+        }
+
+        nbytes_total = 0;
+        while (nbytes_total < request_len) {
+            // printf("Before sending\n");
+            nbytes_last = write(socket_file_descriptor, request + nbytes_total, request_len - nbytes_total);
+            // printf("After sending\n");
+            if (nbytes_last == -1) {
+                perror("write");
+                return NULL;
+            }
+            nbytes_total += nbytes_last;
+        }
+        req_count += 1;
+        printf("Sent %ld HTTP requests\n", req_count);
+    } while(1);
+    return NULL;
+}
+
+void *receive_http_rsp(void *sd) {
+    char buffer[BUFSIZ];
+    ssize_t nbytes_total;
+    int socket_file_descriptor = *(int *)sd;
+    unsigned long int rsp_count = 0;
+    do {
+        // fprintf(stderr, "debug: before read\n");
+        while ((nbytes_total = read(socket_file_descriptor, buffer, BUFSIZ)) > 0) {
+            // fprintf(stderr, "debug: after a read\n");
+            // write(STDOUT_FILENO, buffer, nbytes_total);
+        }
+        // fprintf(stderr, "debug: after read\n");
+        if (nbytes_total == -1) {
+            perror("read");
+            return NULL;
+        }
+        rsp_count += 1;
+        printf("Received %ld HTTP responses\n", rsp_count);
+    } while(1);
+    return NULL;
+}
+
+int main(int argc, char** argv) {
     struct protoent *protoent;
     char *hostname = "example.com";
     in_addr_t in_addr;
-    int request_len;
     int socket_file_descriptor;
-    ssize_t nbytes_total, nbytes_last;
     struct hostent *hostent;
     struct sockaddr_in sockaddr_in;
     unsigned short server_port = 80;
-    unsigned long int req_count = 0;
+    pthread_t thread_send, thread_receive;
 
     if (argc > 1)
         hostname = argv[1];
@@ -75,40 +128,16 @@ int main(int argc, char** argv) {
         exit(EXIT_FAILURE);
     }
 
-    /* Send HTTP request. */
-    signal(SIGPIPE, SIG_IGN);
-    do {
-        request_len = snprintf(request, MAX_REQUEST_LEN, request_template, req_count, hostname, req_count);
-        if (request_len >= MAX_REQUEST_LEN) {
-            fprintf(stderr, "request length large: %d\n", request_len);
-            exit(EXIT_FAILURE);
-        }
+    // Create thread to send and receive HTTP requests
+    pthread_create(&thread_send, NULL, send_http_request, &socket_file_descriptor);
+    pthread_create(&thread_receive, NULL, receive_http_rsp, &socket_file_descriptor);
 
-        nbytes_total = 0;
-        while (nbytes_total < request_len) {
-            printf("Before sending\n");
-            nbytes_last = write(socket_file_descriptor, request + nbytes_total, request_len - nbytes_total);
-            printf("After sending\n");
-            if (nbytes_last == -1) {
-                perror("write");
-                exit(EXIT_FAILURE);
-            }
-            nbytes_total += nbytes_last;
-        }
-        fprintf(stderr, "debug: before read\n");
-        while ((nbytes_total = read(socket_file_descriptor, buffer, BUFSIZ)) > 0) {
-            // fprintf(stderr, "debug: after a read\n");
-            // write(STDOUT_FILENO, buffer, nbytes_total);
-        }
-        fprintf(stderr, "debug: after read\n");
-        if (nbytes_total == -1) {
-            perror("read");
-            exit(EXIT_FAILURE);
-        }
-
-        req_count += 1;
-        printf("Sent %ld HTTP requests\n", req_count);
+    pthread_join(thread_send, NULL);
+    pthread_join(thread_receive, NULL);
 #if 0
+    /* Send HTTP request. */
+    do {
+
         if (req_count % 2500 == 0) {
             fprintf(stderr, "Reconnecting...\n");
             close(socket_file_descriptor);
@@ -122,8 +151,8 @@ int main(int argc, char** argv) {
                 exit(EXIT_FAILURE);
             }
         }
-#endif
     } while(1);
     close(socket_file_descriptor);
     exit(EXIT_SUCCESS);
+#endif
 }
