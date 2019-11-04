@@ -16,6 +16,7 @@
 #include <sys/socket.h>
 #include <unistd.h>
 #include "pthread.h"
+#include "signal.h"
 
 void *send_http_request(void *sd) {
     ssize_t nbytes_last;
@@ -53,7 +54,8 @@ void *send_http_request(void *sd) {
             nbytes_total += nbytes_last;
         }
         req_count += 1;
-        printf("Sent %ld HTTP requests\n", req_count);
+        if (req_count % 1000 == 0)
+            printf("Sent %ld HTTP requests\n", req_count);
     } while(1);
     return NULL;
 }
@@ -75,7 +77,8 @@ void *receive_http_rsp(void *sd) {
             return NULL;
         }
         rsp_count += 1;
-        printf("Received %ld HTTP responses\n", rsp_count);
+        if (rsp_count % 100000 == 0)
+            printf("Received %ld HTTP responses\n", rsp_count);
     } while(1);
     return NULL;
 }
@@ -133,7 +136,7 @@ int main(int argc, char** argv) {
     pthread_create(&thread_receive, NULL, receive_http_rsp, &socket_file_descriptor);
 
     pthread_join(thread_send, NULL);
-    pthread_join(thread_receive, NULL);
+    // pthread_join(thread_receive, NULL);
 #if 0
     /* Send HTTP request. */
     do {
