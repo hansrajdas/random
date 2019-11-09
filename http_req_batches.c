@@ -18,15 +18,20 @@
 #include "pthread.h"
 #include "signal.h"
 
-void *send_http_request(void *sd) {
+typedef struct Data {
+    int sd;
+    char hostname[100];
+} Data;
+
+void *send_http_request(void *data) {
     ssize_t nbytes_last;
     ssize_t nbytes_total;
     unsigned long int req_count = 0;
     int request_len;
-    int socket_file_descriptor = *(int *)sd;
+    Data *thread_data = (Data *)data;
     enum CONSTEXPR {MAX_REQUEST_LEN = 1024};
-    char *hostname = "www.pikusports.com";
     char request[MAX_REQUEST_LEN];
+    pthread_t thread_id = pthread_self();
     char request_template[] = "GET /?abc-%ld HTTP/1.1\r\n"
                               "Host: %s\r\n"
                               "Cache-Control: private, no-cache, no-store, max-age=0\r\n\r\n"
@@ -36,7 +41,7 @@ void *send_http_request(void *sd) {
 
     signal(SIGPIPE, SIG_IGN);
     do {
-        request_len = snprintf(request, MAX_REQUEST_LEN, request_template, req_count, hostname, req_count);
+        request_len = snprintf(request, MAX_REQUEST_LEN, request_template, req_count, thread_data->hostname, req_count);
         if (request_len >= MAX_REQUEST_LEN) {
             fprintf(stderr, "request length large: %d\n", request_len);
             return NULL;
@@ -45,7 +50,7 @@ void *send_http_request(void *sd) {
         nbytes_total = 0;
         while (nbytes_total < request_len) {
             // printf("Before sending\n");
-            nbytes_last = write(socket_file_descriptor, request + nbytes_total, request_len - nbytes_total);
+            nbytes_last = write(thread_data->sd, request + nbytes_total, request_len - nbytes_total);
             // printf("After sending\n");
             if (nbytes_last == -1) {
                 perror("write");
@@ -55,7 +60,7 @@ void *send_http_request(void *sd) {
         }
         req_count += 1;
         if (req_count % 1000 == 0)
-            printf("Sent %ld HTTP requests\n", req_count);
+            printf("Thread ID[%d]: Sent %ld HTTP requests\n", (int)thread_id, req_count);
     } while(1);
     return NULL;
 }
@@ -77,7 +82,7 @@ void *receive_http_rsp(void *sd) {
             return NULL;
         }
         rsp_count += 1;
-        if (rsp_count % 100000 == 0)
+        if (rsp_count % 1000000 == 0)
             printf("Received %ld HTTP responses\n", rsp_count);
     } while(1);
     return NULL;
@@ -92,6 +97,7 @@ int main(int argc, char** argv) {
     struct sockaddr_in sockaddr_in;
     unsigned short server_port = 80;
     pthread_t thread_send, thread_receive;
+    Data data;
 
     if (argc > 1)
         hostname = argv[1];
@@ -132,30 +138,12 @@ int main(int argc, char** argv) {
     }
 
     // Create thread to send and receive HTTP requests
-    pthread_create(&thread_send, NULL, send_http_request, &socket_file_descriptor);
+    data.sd = socket_file_descriptor;
+    strcpy(data.hostname, hostname);
+    data.hostname[strlen(hostname)] = '\0';
+    pthread_create(&thread_send, NULL, send_http_request, &data);
     pthread_create(&thread_receive, NULL, receive_http_rsp, &socket_file_descriptor);
 
     pthread_join(thread_send, NULL);
     // pthread_join(thread_receive, NULL);
-#if 0
-    /* Send HTTP request. */
-    do {
-
-        if (req_count % 2500 == 0) {
-            fprintf(stderr, "Reconnecting...\n");
-            close(socket_file_descriptor);
-            socket_file_descriptor = socket(AF_INET, SOCK_STREAM, protoent->p_proto);
-            if (socket_file_descriptor == -1) {
-                perror("socket");
-                exit(EXIT_FAILURE);
-            }
-            if (connect(socket_file_descriptor, (struct sockaddr*)&sockaddr_in, sizeof(sockaddr_in)) == -1) {
-                perror("connect");
-                exit(EXIT_FAILURE);
-            }
-        }
-    } while(1);
-    close(socket_file_descriptor);
-    exit(EXIT_SUCCESS);
-#endif
 }
