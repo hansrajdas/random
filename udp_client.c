@@ -27,7 +27,7 @@ int main(int argc, char** argv) {
   serverAddr.sin_family = AF_INET;
   serverAddr.sin_port = htons(server_port);
   serverAddr.sin_addr.s_addr = inet_addr(host_ip);
-  memset(serverAddr.sin_zero, '\0', sizeof serverAddr.sin_zero);  
+  memset(serverAddr.sin_zero, '\0', sizeof serverAddr.sin_zero);
 
   /*Initialize size variable to be used later on*/
   addr_size = sizeof serverAddr;
@@ -38,7 +38,7 @@ int main(int argc, char** argv) {
     printf("You typed: %s",buffer);
 
     nBytes = strlen(buffer) + 1;
-    
+
     /*Send message to server*/
     sendto(clientSocket,buffer,nBytes,0,(struct sockaddr *)&serverAddr,addr_size);
 
