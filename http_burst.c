@@ -69,7 +69,7 @@ void *receive_http_rsp(void *sd) {
     char buffer[BUFSIZ];
     ssize_t nbytes_total;
     int socket_file_descriptor = *(int *)sd;
-    unsigned long int rsp_count = 0;
+    // unsigned long int rsp_count = 0;
     do {
         // fprintf(stderr, "debug: before read\n");
         while ((nbytes_total = read(socket_file_descriptor, buffer, BUFSIZ)) > 0) {
@@ -81,9 +81,11 @@ void *receive_http_rsp(void *sd) {
             perror("read");
             return NULL;
         }
+        /*
         rsp_count += 1;
         if (rsp_count % 1000000 == 0)
             printf("Received %ld HTTP responses\n", rsp_count);
+        */
     } while(1);
     return NULL;
 }
