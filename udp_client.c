@@ -8,7 +8,7 @@
 #include <string.h>
 
 int main(int argc, char** argv) {
-  int clientSocket, portNum, nBytes;
+  int clientSocket, nBytes;
   char buffer[1024];
   char *host_ip = "127.0.0.1";
   unsigned short server_port = 80;
@@ -34,18 +34,18 @@ int main(int argc, char** argv) {
 
   while(1) {
     printf("Type a sentence to send to server:\n");
-    fgets(buffer,1024,stdin);
+    fgets(buffer, 1024, stdin);
     printf("You typed: %s",buffer);
 
     nBytes = strlen(buffer) + 1;
 
     /*Send message to server*/
-    sendto(clientSocket,buffer,nBytes,0,(struct sockaddr *)&serverAddr,addr_size);
+    sendto(clientSocket, buffer, nBytes, 0, (struct sockaddr *)&serverAddr, addr_size);
 
     /*Receive message from server*/
-    nBytes = recvfrom(clientSocket,buffer,1024,0,NULL, NULL);
+    nBytes = recvfrom(clientSocket, buffer, 1024, 0, NULL, NULL);
 
-    printf("Received from server: %s\n",buffer);
+    printf("Received from server: %s\n", buffer);
   }
   return 0;
 }
