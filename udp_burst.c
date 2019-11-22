@@ -25,7 +25,7 @@
 
 int main(int argc, char** argv) {
   int clientSocket, nBytes;
-  char buffer[8] = "UDP";
+  char buffer[4] = "...";
   char *host_ip = "127.0.0.1";
   struct sockaddr_in serverAddr;
   socklen_t addr_size;
@@ -49,7 +49,11 @@ int main(int argc, char** argv) {
   while(1) {
     serverAddr.sin_port = htons(port);
     /*Send message to server*/
-    sendto(clientSocket, buffer, nBytes, 0, (struct sockaddr *)&serverAddr, addr_size);
+    if (port && sendto(clientSocket, buffer, nBytes, 0, (struct sockaddr *)&serverAddr, addr_size) < 0) {
+      perror("sendto failed");
+      printf("Failed for port: %u\n", port);
+      return -1;
+    }
 
     /*Receive message from server*/
     // recvfrom(clientSocket, buffer, 1024, 0, NULL, NULL);
