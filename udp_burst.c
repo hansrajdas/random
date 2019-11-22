@@ -57,7 +57,8 @@ int main(int argc, char** argv) {
 
     /*Receive message from server*/
     // recvfrom(clientSocket, buffer, 1024, 0, NULL, NULL);
-    printf("Port: %u\n", port);
+    if (!port)
+      printf(".\n");
     port += 1;
   }
   return 0;
