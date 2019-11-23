@@ -22,17 +22,17 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <string.h>
+#include "pthread.h"
 
-int main(int argc, char** argv) {
+char *host_ip = "127.0.0.1";
+
+void *send_udp_requests(void *data) {
   int clientSocket, nBytes;
-  char buffer[4] = "...";
-  char *host_ip = "127.0.0.1";
   struct sockaddr_in serverAddr;
   socklen_t addr_size;
   unsigned short int port = 1;
-
-  if (argc > 1)
-    host_ip = argv[1];
+  char buffer[4] = "...";
+  pthread_t thread_id = pthread_self();
 
   /*Create UDP socket*/
   clientSocket = socket(AF_INET, SOCK_DGRAM, 0);
@@ -51,15 +51,24 @@ int main(int argc, char** argv) {
     /*Send message to server*/
     if (port && sendto(clientSocket, buffer, nBytes, 0, (struct sockaddr *)&serverAddr, addr_size) < 0) {
       perror("sendto failed");
-      printf("Failed for port: %u\n", port);
-      return -1;
+      printf("%d. Failed for port: %u\n", (int)thread_id, port);
+      return NULL;
     }
-
-    /*Receive message from server*/
-    // recvfrom(clientSocket, buffer, 1024, 0, NULL, NULL);
     if (!port)
-      printf(".\n");
+      printf("Cycle completed by %d\n", (int)thread_id);
     port += 1;
   }
+  return NULL;
+}
+
+int main(int argc, char** argv) {
+  pthread_t udp_send;
+
+  if (argc > 1)
+    host_ip = argv[1];
+
+  pthread_create(&udp_send, NULL, send_udp_requests, NULL);
+
+  pthread_join(udp_send, NULL);
   return 0;
 }
