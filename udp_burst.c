@@ -5,11 +5,11 @@
  * This program sends UDP packets on a given IP address in burst. It sends UDP
  * packets on all ports from 1 to 65535 continuously.
  *
- * Beware, executing this program can hamper systems network and things like
- * wifi disconnected may happen.
+ * Executing this program has networking side effects like your device might
+ * disconnect from wifi.
  *
  * Approach:
- * Accepts IP from command line arguments and sends UDP packets on all ports
+ * Accepts IP as command line argument and sends UDP packets on all ports
  * from main thread.
  *
  * Usage:
