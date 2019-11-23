@@ -12,26 +12,43 @@
  * Accepts IP as command line argument and sends UDP packets on all ports
  * from main thread.
  *
- * Usage:
- * ./a.out 1.2.3.4
+ * Compile:
+ * gcc -g udp_burst.c -lpthread
  *
+ * Usage:
+ * ./a.out <HOST_IP> <NUMBER_OF_CLIENTS>
+ *
+ * Like: ./a.out 1.2.3.4 3
+ * It will make UDP requests to host "1.2.3.4" using "3" clients/threads.
  */
 
 #include <arpa/inet.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <string.h>
+#include <time.h>
 #include "pthread.h"
 
 char *host_ip = "127.0.0.1";
+
+void delay(int milliseconds) {
+  long pause;
+  clock_t now,then;
+
+  pause = milliseconds * (CLOCKS_PER_SEC / 1000);
+  now = then = clock();
+  while((now - then) < pause)
+    now = clock();
+}
 
 void *send_udp_requests(void *data) {
   int clientSocket, nBytes;
   struct sockaddr_in serverAddr;
   socklen_t addr_size;
   unsigned short int port = 1;
-  char buffer[4] = "...";
+  char *buffer = ".";
   pthread_t thread_id = pthread_self();
 
   /*Create UDP socket*/
@@ -51,8 +68,8 @@ void *send_udp_requests(void *data) {
     /*Send message to server*/
     if (port && sendto(clientSocket, buffer, nBytes, 0, (struct sockaddr *)&serverAddr, addr_size) < 0) {
       perror("sendto failed");
-      printf("%d. Failed for port: %u\n", (int)thread_id, port);
-      return NULL;
+      printf("Failed for thread[%d], port[%u]\n", (int)thread_id, port);
+      delay(500);
     }
     if (!port)
       printf("Cycle completed by %d\n", (int)thread_id);
@@ -62,13 +79,28 @@ void *send_udp_requests(void *data) {
 }
 
 int main(int argc, char** argv) {
-  pthread_t udp_send;
+  pthread_t *udp_send;
+  unsigned long int i = 0;
+  unsigned long int n = 1;
 
   if (argc > 1)
     host_ip = argv[1];
 
-  pthread_create(&udp_send, NULL, send_udp_requests, NULL);
+  if (argc > 2)
+    n = strtoul(argv[2], NULL, 10);
 
-  pthread_join(udp_send, NULL);
+  udp_send = (pthread_t *)malloc(n * sizeof(pthread_t));
+  if (!udp_send) {
+    printf("malloc failed");
+    return -1;
+  }
+
+  for(;i < n; i++) {
+    pthread_create(&udp_send[i], NULL, send_udp_requests, NULL);
+    printf("Created thread %ld\n", i + 1);
+  }
+
+  for(i = 0; i < n; i++)
+    pthread_join(udp_send[i], NULL);
   return 0;
 }
