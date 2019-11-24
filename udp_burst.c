@@ -13,13 +13,19 @@
  * from main thread.
  *
  * Compile:
- * gcc -g udp_burst.c -lpthread
+ * gcc -g udp_burst.c -lpthread -o udp_burst
  *
  * Usage:
- * ./a.out <HOST_IP> <NUMBER_OF_CLIENTS>
+ * ./udp_burst <HOST_IP> <NUMBER_OF_CLIENTS> <WAIT_ON_FAILURE>
  *
- * Like: ./a.out 1.2.3.4 3
- * It will make UDP requests to host "1.2.3.4" using "3" clients/threads.
+ * HOST_IP(default = 127.0.0.1): IPv4 address of host to burst with UDP packets
+ * NUMBER_OF_CLIENTS(default = 1): Number of clients/threads to use
+ * WAIT_ON_FAILURE(default = 500): Wait in ms if sending UDP fails before sending again
+ *
+ * Example:
+ * ./udp_burst 148.66.137.25 3 1000
+ * It will make UDP requests to host "1.2.3.4" using "3" clients/threads and
+ * waits for 1000ms(1 second) on failure to send UDP packet.
  */
 
 #include <arpa/inet.h>
@@ -31,7 +37,9 @@
 #include <time.h>
 #include "pthread.h"
 
+// Globals
 char *host_ip = "127.0.0.1";
+unsigned long int wait_in_ms = 500;
 
 void delay(int milliseconds) {
   long pause;
@@ -69,7 +77,7 @@ void *send_udp_requests(void *data) {
     if (port && sendto(clientSocket, buffer, nBytes, 0, (struct sockaddr *)&serverAddr, addr_size) < 0) {
       perror("sendto failed");
       printf("Failed for thread[%d], port[%u]\n", (int)thread_id, port);
-      delay(500);
+      delay(wait_in_ms);
     }
     if (!port)
       printf("Cycle completed by %d\n", (int)thread_id);
@@ -88,6 +96,9 @@ int main(int argc, char** argv) {
 
   if (argc > 2)
     n = strtoul(argv[2], NULL, 10);
+
+  if (argc > 3)
+    wait_in_ms = strtoul(argv[3], NULL, 10);
 
   udp_send = (pthread_t *)malloc(n * sizeof(pthread_t));
   if (!udp_send) {
