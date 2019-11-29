@@ -54,9 +54,9 @@ def get_object_content(bucket_name, key, client):
     # client = boto3.client('s3')
     response = client.get_object(Bucket=bucket_name, Key=key)
     gzipfile = io.BytesIO(response['Body'].read())
-    gzipfile = gzip.GzipFile(fileobj=gzipfile)
-    content = gzipfile.read()
-    print(content)
+    for s in gzip.GzipFile(fileobj=gzipfile):
+        # content = gzipfile.read()
+        print(s.strip().split())
 
 @enter_exit_fn_log
 def parse_trigger_data(record):
