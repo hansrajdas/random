@@ -2,21 +2,24 @@ import json
 
 
 def balance_expenses(expenses, per_head):
-    start = 0
-    end = len(expenses) - 1
     print('\nTransactions required')
     print('---------------------')
+    if all(v[1] == per_head for v in expenses):
+        print('* No transaction required')
+        return None
+    start = 0
+    end = len(expenses) - 1
     while start < end:
         balance = per_head - expenses[start][1]
         if balance < expenses[end][1] - per_head:
-            print('%s should give %.2f to %s' % (expenses[start][0],
+            print('* %s should give %.2f to %s' % (expenses[start][0],
                                                  balance,
                                                  expenses[end][0]))
             expenses[start][1] = per_head
             expenses[end][1] = expenses[end][1] - balance
             start += 1
         elif balance > expenses[end][1] - per_head:
-            print('%s should give %.2f to %s' % (expenses[start][0],
+            print('* %s should give %.2f to %s' % (expenses[start][0],
                                                  expenses[end][1] - per_head,
                                                  expenses[end][0]))
             expenses[start][1] = (
@@ -24,7 +27,7 @@ def balance_expenses(expenses, per_head):
             expenses[end][1] = per_head
             end -= 1
         else:
-            print('%s should give %.2f to %s' % (expenses[start][0],
+            print('* %s should give %.2f to %s' % (expenses[start][0],
                                                  balance,
                                                  expenses[end][0]))
             expenses[start][1] = per_head
