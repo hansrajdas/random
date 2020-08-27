@@ -45,7 +45,6 @@ def update_collaboration_pattern():
             if row[-1] == 'Non':
                 update_value(row)
             output_file.write('\n%s' % format_row(row))
-            print(row)
     output_file.close()
 
 
