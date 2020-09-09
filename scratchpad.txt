@@ -1,8 +1,1 @@
-:[n]ext    " Move to next file in list of opened files
-:[N]ext    " Move to previous file in list of opened files
-:[wn]ext   " Save and move to the next file in list of opened files
-:[wN]ext   " Save and move to previous file in list of opened files
-
-:tabnew <file(s)>    " Open file(s) in new vim tab
-:tabNext             " Switch to next tab
-:tabprevious         " Switch to previous tab
+https://www.elastic.co/guide/en/elasticsearch/reference/7.x/tune-for-indexing-speed.html#_disable_replicas_for_initial_loads
