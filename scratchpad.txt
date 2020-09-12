@@ -1,1 +1,4 @@
-https://www.elastic.co/guide/en/elasticsearch/reference/7.x/tune-for-indexing-speed.html#_disable_replicas_for_initial_loads
+2020-09-12: Pending links for http(s) request using C
+- https://stackoverflow.com/questions/11208299/how-to-make-an-http-get-request-in-c-without-libcurl
+- https://stackoverflow.com/questions/16255323/make-an-https-request-using-sockets-on-linux
+- https://stackoverflow.com/questions/1981372/are-parallel-calls-to-send-recv-on-the-same-socket-valid
