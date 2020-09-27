@@ -2,3 +2,9 @@
 - https://stackoverflow.com/questions/11208299/how-to-make-an-http-get-request-in-c-without-libcurl
 - https://stackoverflow.com/questions/16255323/make-an-https-request-using-sockets-on-linux
 - https://stackoverflow.com/questions/1981372/are-parallel-calls-to-send-recv-on-the-same-socket-valid
+
+UAT:
+Current cost: https://calculator.aws/#/estimate?id=7ae63b1004611b8b19da2444c056673147d38b72
+New estimate: https://calculator.aws/#/estimate?id=a62faa693ce1f067a83f18c529ac60d51cacedca
+
+
