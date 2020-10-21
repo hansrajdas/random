@@ -62,3 +62,14 @@ def main():
 
 if __name__ == '__main__':
   main()
+
+
+# Repeat
+def is_valid_bst_utils(root, _min, _max):
+    if root is None:
+        return True
+    if root.data < _min or root.data > _max:
+        return False
+    return is_valid_bst_utils(root.left, _min, root.data) and is_valid_bst_utils(root.right, root.data, _max)
+def is_valid_bst(root):
+    return is_valid_bst_utils(root, float('-Inf'), float('Inf'))
