@@ -54,4 +54,42 @@ def main():
   else:
     print('na')
 
+  # Round-2
+  lca = get_lca_2(root, 4, 7)
+  if lca:
+    print(lca.k)
+  else:
+    print('na')
+
+
+# Round-2
+def get_lca_2(root, n1, n2):
+    found = {n1: False, n2: False}
+    lca = get_lca_utils(root, n1, n2, found)
+
+    if (found[n1] and found[n2]) or (found[n1] and find(lca, n2)) or (found[n2] and find(lca, n1)):
+        return lca
+    return None
+
+def get_lca_utils(root, n1, n2, found):
+    if root is None:
+        return None
+    if root.k == n1 or root.k == n2:
+        found[root.k] = True
+        return root
+
+    lca_left = get_lca_utils(root.left, n1, n2, found)
+    lca_right = get_lca_utils(root.right, n1, n2, found)
+
+    if lca_left and lca_right:
+        return root
+    return lca_left if lca_left else lca_right
+
+def find(root, n):
+    if root is None:
+        return False
+    if root.k == n:
+        return True
+    return find(root.left, n) or find(root.right, n)
+
 main()
