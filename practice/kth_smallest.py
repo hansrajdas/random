@@ -25,3 +25,8 @@ assert kthSmallest(A, 0, len(A) - 1, 3) == 5
 assert kthSmallest(A, 0, len(A) - 1, 4) == 7
 assert kthSmallest(A, 0, len(A) - 1, 7) == 26
 assert kthSmallest(A, 0, len(A) - 1, 8) == None
+
+A = [12, 3, 5, 2, 3, 2, 7, 4, 19, 26]
+print(sorted(A))
+assert kthSmallest(A, 0, len(A) - 1, 3) == sorted(A)[2]
+assert kthSmallest(A, 0, len(A) - 1, 5) == sorted(A)[4]
