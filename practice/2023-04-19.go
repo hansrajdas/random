@@ -2,6 +2,7 @@ package main
 
 import (
     "fmt"
+    "sync"
 )
 
 
@@ -73,4 +74,25 @@ func main() {
     go sum(nums[len(nums)/2:], c)
     x, y := <-c, <-c
     fmt.Println(x, y, x + y)
+
+    // Ping pong example
+    n := 5
+    var wg sync.WaitGroup
+    wg.Add(2)
+    ch := make(chan string)
+    go func(n int) {
+        defer wg.Done()
+        for i := 0; i < n; i++ {
+            fmt.Println(<-ch)
+            ch <- "pong"
+        }
+    }(n)
+    go func(n int) {
+        defer wg.Done()
+        for i := 0; i < n; i++ {
+            ch <- "ping"
+            fmt.Println(<-ch)
+        }
+    }(n)
+    wg.Wait()
 }
