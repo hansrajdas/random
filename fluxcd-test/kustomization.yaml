@@ -4,3 +4,4 @@ namespace: ns-1
 resources:
 - ns-1.yaml
 - ./pod-1.yaml
+- ./pod-2.yaml
