@@ -5,4 +5,3 @@ resources:
 - ns.yaml
 - ./pod-1.yaml
 - ./pod-2.yaml
-- ./pod-3.yaml
