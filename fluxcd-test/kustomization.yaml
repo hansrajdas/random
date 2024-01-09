@@ -6,3 +6,5 @@ resources:
 - ./pod-1.yaml
 - ./pod-2.yaml
 - ./pod-3.yaml
+- ./pod-4.yaml
+- ./pod-5.yaml
