@@ -9,3 +9,4 @@ resources:
 - ./pod-4.yaml
 - ./pod-5.yaml
 - ./pod-6.yaml
+- ./pod-7.yaml
