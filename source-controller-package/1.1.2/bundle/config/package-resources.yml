@@ -1,0 +1,52 @@
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  creationTimestamp: null
+  name: test.sc.tanzu.vmware.com.0.0.0
+spec:
+  refName: test.sc.tanzu.vmware.com
+  releasedAt: null
+  template:
+    spec:
+      deploy:
+      - kapp: {}
+      fetch:
+      - git: {}
+      template:
+      - ytt:
+          paths:
+          - upstream
+      - kbld: {}
+  valuesSchema:
+    openAPIv3: null
+  version: 0.0.0
+
+---
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: PackageMetadata
+metadata:
+  creationTimestamp: null
+  name: test.sc.tanzu.vmware.com
+spec:
+  displayName: test
+  longDescription: test.sc.tanzu.vmware.com
+  shortDescription: test.sc.tanzu.vmware.com
+
+---
+apiVersion: packaging.carvel.dev/v1alpha1
+kind: PackageInstall
+metadata:
+  annotations:
+    kctrl.carvel.dev/local-fetch-0: .
+  creationTimestamp: null
+  name: test
+spec:
+  packageRef:
+    refName: test.sc.tanzu.vmware.com
+    versionSelection:
+      constraints: 0.0.0
+  serviceAccountName: test-sa
+status:
+  conditions: null
+  friendlyDescription: ""
+  observedGeneration: 0
