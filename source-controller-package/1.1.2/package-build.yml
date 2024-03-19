@@ -16,9 +16,11 @@ spec:
               - upstream
               - overlays
               - values.yaml
+              - .imgpkg
           - kbld: {}
       export:
       - includePaths:
         - upstream
         - overlays
         - values.yaml
+        - .imgpkg
