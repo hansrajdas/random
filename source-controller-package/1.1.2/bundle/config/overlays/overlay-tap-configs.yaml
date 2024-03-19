@@ -74,3 +74,57 @@ spec:
         runAsGroup: 65534
 
 #@ end
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: source-ca-certificates
+  namespace: #@ data.values.namespace
+type: Opaque
+data:
+  ca-certificates.crt: ""
+
+#! ServiceAccount access required for OCIRepository API. Roles in upstream flux is managed via Flux install.
+#@overlay/match by=overlay.subset({"apiVersion": "rbac.authorization.k8s.io/v1", "kind": "ClusterRole", "metadata":{"name": "fluxcd-source-manager-role"}})
+---
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - serviceaccounts
+  verbs:
+  - get
+  - list
+  - watch
+
+#! Ammends Source Controller deployment to include a new volume mount
+#! with cerificate data from a secret "source-ca-certificates"
+#@overlay/match by=overlay.subset({"kind":"Deployment","metadata":{"name":"source-controller"}}),expects="0+"
+---
+spec:
+  template:
+    spec:
+      containers:
+      #@overlay/match by=overlay.index(0)
+      - volumeMounts:
+        #@overlay/append
+        - mountPath: /etc/ssl/certs
+          name: ca-certs
+
+#@overlay/match by=overlay.subset({"kind":"Deployment","metadata":{"name":"source-controller"}}),expects="0+"
+---
+spec:
+  template:
+    spec:
+      volumes:
+      #@overlay/append
+      - name: ca-certs
+        secret:
+          secretName: source-ca-certificates
+
+
+#@overlay/match by=overlay.subset({"apiVersion": "v1", "kind": "Secret", "metadata":{"name": "source-ca-certificates"}})
+---
+data:
+  ca-certificates.crt: #@ base64.encode(data.values.ca_cert_data) if hasattr(data.values, "ca_cert_data") else ""
