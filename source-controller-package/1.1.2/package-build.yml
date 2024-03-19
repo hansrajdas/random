@@ -13,7 +13,9 @@ spec:
           template:
           - ytt:
               paths:
-              - config
+              - upstream
+              - overlays
+              - values.yaml
           - kbld:
           paths:
           - "-"
