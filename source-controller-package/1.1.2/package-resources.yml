@@ -2,9 +2,9 @@ apiVersion: data.packaging.carvel.dev/v1alpha1
 kind: Package
 metadata:
   creationTimestamp: null
-  name: fluxcd-source-controller.tmc.tanzu.vmware.com.0.0.1
+  name: tmc.fluxcd-source-controller.tanzu.vmware.com.0.0.0
 spec:
-  refName: fluxcd-source-controller.tmc.tanzu.vmware.com
+  refName: tmc.fluxcd-source-controller.tanzu.vmware.com
   releasedAt: null
   template:
     spec:
@@ -18,22 +18,21 @@ spec:
           - upstream
           - overlays
           - values.yaml
-          - .imgpkg
       - kbld: {}
   valuesSchema:
     openAPIv3: null
-  version: 0.0.1
+  version: 0.0.0
 
 ---
 apiVersion: data.packaging.carvel.dev/v1alpha1
 kind: PackageMetadata
 metadata:
   creationTimestamp: null
-  name: fluxcd-source-controller.tmc.tanzu.vmware.com
+  name: tmc.fluxcd-source-controller.tanzu.vmware.com
 spec:
-  displayName: fluxcd-source-controller
-  longDescription: fluxcd-source-controller.tmc.tanzu.vmware.com
-  shortDescription: fluxcd-source-controller.tmc.tanzu.vmware.com
+  displayName: tmc
+  longDescription: tmc.fluxcd-source-controller.tanzu.vmware.com
+  shortDescription: tmc.fluxcd-source-controller.tanzu.vmware.com
 
 ---
 apiVersion: packaging.carvel.dev/v1alpha1
@@ -42,13 +41,13 @@ metadata:
   annotations:
     kctrl.carvel.dev/local-fetch-0: .
   creationTimestamp: null
-  name: fluxcd-source-controller
+  name: tmc
 spec:
   packageRef:
-    refName: fluxcd-source-controller.tmc.tanzu.vmware.com
+    refName: tmc.fluxcd-source-controller.tanzu.vmware.com
     versionSelection:
-      constraints: 0.0.1
-  serviceAccountName: fluxcd-source-controller-sa
+      constraints: 0.0.0
+  serviceAccountName: tmc-sa
 status:
   conditions: null
   friendlyDescription: ""

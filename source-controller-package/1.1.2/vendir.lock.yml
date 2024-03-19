@@ -7,5 +7,5 @@ directories:
       tags:
       - v1.1.2
     path: .
-  path: config/upstream
+  path: upstream
 kind: LockConfig

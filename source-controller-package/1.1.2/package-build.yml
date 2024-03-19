@@ -2,7 +2,7 @@ apiVersion: kctrl.carvel.dev/v1alpha1
 kind: PackageBuild
 metadata:
   creationTimestamp: null
-  name: fluxcd-source-controller.tmc.tanzu.vmware.com
+  name: tmc.fluxcd-source-controller.tanzu.vmware.com
 spec:
   template:
     spec:
@@ -16,11 +16,9 @@ spec:
               - upstream
               - overlays
               - values.yaml
-              - .imgpkg
           - kbld: {}
       export:
       - includePaths:
         - upstream
         - overlays
         - values.yaml
-        - .imgpkg
