@@ -15,8 +15,10 @@ spec:
               paths:
               - upstream
               - overlays
+              - values.yaml
           - kbld: {}
       export:
       - includePaths:
         - upstream
         - overlays
+        - values.yaml

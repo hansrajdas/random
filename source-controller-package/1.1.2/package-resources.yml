@@ -17,6 +17,7 @@ spec:
           paths:
           - upstream
           - overlays
+          - values.yaml
       - kbld: {}
   valuesSchema:
     openAPIv3: null
