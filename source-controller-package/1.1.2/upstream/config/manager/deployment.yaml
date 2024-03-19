@@ -26,8 +26,7 @@ spec:
         fsGroup: 1337
       containers:
       - name: manager
-        # image: fluxcd/source-controller:v1.1.2
-        image: projects.registry.vmware.com/tkg/fluxcd/source-controller:v1.1.2_vmware.1
+        image: fluxcd/source-controller:v1.1.2
         imagePullPolicy: IfNotPresent
         securityContext:
           allowPrivilegeEscalation: false

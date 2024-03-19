@@ -2,10 +2,8 @@ apiVersion: kctrl.carvel.dev/v1alpha1
 kind: PackageBuild
 metadata:
   creationTimestamp: null
-  name: test.sc.tanzu.vmware.com
+  name: tmc.fluxcd-source-controller.tanzu.vmware.com
 spec:
-  release:
-  - resource: {}
   template:
     spec:
       app:
@@ -16,10 +14,9 @@ spec:
           - ytt:
               paths:
               - upstream
+              - overlays
           - kbld: {}
       export:
-      - imgpkgBundle:
-          image: hansrajdas/sample-repo
-          useKbldImagesLock: true
-        includePaths:
+      - includePaths:
         - upstream
+        - overlays
