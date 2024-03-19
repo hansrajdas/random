@@ -18,7 +18,10 @@ spec:
           - upstream
           - overlays
           - values.yaml
-      - kbld: {}
+      - kbld:
+          paths:
+          - "-"
+          - .imgpkg/images.yml
   valuesSchema:
     openAPIv3: null
   version: 0.0.0
