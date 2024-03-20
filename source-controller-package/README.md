@@ -1,3 +1,4 @@
+## Using kctrl
 ### Create package
 ```sh
 kctrl package init
@@ -37,4 +38,34 @@ kctrl package install -i sc-1 -p test.sc.tanzu.vmware.com --version 0.0.1 -n han
 ### Delete package install
 ```sh
 kctrl package installed delete -i sc-1 -n hans
+```
+
+## Using lever
+- Below workload is used for `source-controller-package/1.1.2`
+```yaml
+apiVersion: carto.run/v1alpha1
+kind: Workload
+metadata:
+  labels:
+    lever.tanzu.vmware.com/package-type: carvel
+    lever.tanzu.vmware.com/integration-test-runner: "concourse"
+    app.kubernetes.io/part-of: gsc
+  name: hans-fluxcd-source-controller-package         #! unique name within your namespace
+  namespace: ws-tmc-build-integrations                     #! namespace provisioned for your group
+spec:
+  params:
+  - name: destination
+    value: harbor-repo.vmware.com/lever/test/hans-fluxcd-source-controller-package
+  - name: shepherd_pipeline_id
+    value: hans-fluxcd-source-controller-package
+  - name: source_pool
+    value: gke-127-tap-18-cartov2
+  - name: skip-integration-test                         #! skip integration tests for quick verification
+    value: true
+  source:
+    git:
+      ref:
+        branch: master                                                 #! branch to track
+      url: https://github.com/hansrajdas/random.git   #! git repo (https only)
+    subPath: source-controller-package/1.1.2
 ```
