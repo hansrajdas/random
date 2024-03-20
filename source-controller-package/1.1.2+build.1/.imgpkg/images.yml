@@ -5,7 +5,7 @@ images:
     kbld.carvel.dev/id: fluxcd/source-controller:v1.1.2
     kbld.carvel.dev/origins: |
       - resolved:
-          tag: v1.1.2_vmware.1
-          url: projects.registry.vmware.com/tkg/fluxcd/source-controller:v1.1.2_vmware.1
-  image: projects.registry.vmware.com/tkg/fluxcd/source-controller@sha256:580a61fa07077e5e32392e9ffc32e447266ab8bf75109b50c97dea2cbf54b38b
+          tag: 0.0.0-1710941933
+          url: harbor-repo.vmware.com/lever/test/fluxcd-source-controller-image:0.0.0-1710941933
+  image: harbor-repo.vmware.com/lever/test/fluxcd-source-controller-image@sha256:86aa40341965c3b1323afd46f85f446b2e023f4184eab30d59867626b5a1a045
 kind: ImagesLock
