@@ -1,0 +1,57 @@
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  creationTimestamp: null
+  name: fluxcd-source-controller.tanzu.vmware.com.1.1.2+build.1
+spec:
+  refName: fluxcd-source-controller.tanzu.vmware.com
+  releasedAt: null
+  template:
+    spec:
+      deploy:
+      - kapp: {}
+      fetch:
+      - git: {}
+      template:
+      - ytt:
+          paths:
+          - upstream
+          - overlays
+          - values.yaml
+      - kbld:
+          paths:
+          - "-"
+          - .imgpkg/images.yml
+  valuesSchema:
+    openAPIv3: null
+  version: 1.1.2+build.1
+
+---
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: PackageMetadata
+metadata:
+  creationTimestamp: null
+  name: fluxcd-source-controller.tanzu.vmware.com
+spec:
+  displayName: fluxcd-source-controller
+  longDescription: fluxcd-source-controller.tanzu.vmware.com
+  shortDescription: fluxcd-source-controller.tanzu.vmware.com
+
+---
+apiVersion: packaging.carvel.dev/v1alpha1
+kind: PackageInstall
+metadata:
+  annotations:
+    kctrl.carvel.dev/local-fetch-0: .
+  creationTimestamp: null
+  name: fluxcd-source-controller
+spec:
+  packageRef:
+    refName: fluxcd-source-controller.tanzu.vmware.com
+    versionSelection:
+      constraints: 1.1.2+build.1
+  serviceAccountName: fluxcd-source-controller-sa
+status:
+  conditions: null
+  friendlyDescription: ""
+  observedGeneration: 0
