@@ -6,4 +6,5 @@ minimumRequiredVersion: 0.15.0
 
 overrides:
 - image: fluxcd/source-controller:v1.1.2
-  newImage: projects.registry.vmware.com/tkg/fluxcd/source-controller:v1.1.2_vmware.1
+  # newImage: projects.registry.vmware.com/tkg/fluxcd/source-controller:v1.1.2_vmware.1
+  newImage: harbor-repo.vmware.com/lever/test/fluxcd-source-controller-image:0.0.0-1710941933
